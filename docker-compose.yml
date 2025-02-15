@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: telegram_bot
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/tz_bot
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - TELEGRAM_BOT_TOKEN=7881210963:AAGczK6l5kMdsS9ZwGncdfQix8PvXaj_udI
+      - TELEGRAM_BOT_USERNAME=@snp_test_task_bot
+    depends_on:
+      - db
+    networks:
+      - bot_network
+    restart: always
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=tz_bot
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - bot_network
+    restart: always
+
+networks:
+  bot_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
